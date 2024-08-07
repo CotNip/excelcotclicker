@@ -3,8 +3,8 @@ Sub Quit()
     Application.Quit
 End Sub
 Sub Click()
-    totalRevenue = totalRevenue + 1 + itemRate(0)
-    clickRevenue = clickRevenue + 1 + itemRate(0)
+    totalRevenue = totalRevenue + itemRate(0)
+    clickRevenue = clickRevenue + itemRate(0)
 End Sub
 
 '-------------------------------------------------- buildings --------------------------------------------------
