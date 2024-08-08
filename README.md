@@ -2,4 +2,4 @@
 
 idle clicker game in excel
 
-paste files into modules in VBA
+paste contents of files into modules in VBA
