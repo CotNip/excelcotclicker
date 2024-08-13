@@ -2,9 +2,18 @@ Sub Quit()
     ActiveWorkbook.Save
     Application.Quit
 End Sub
+Sub Reset()
+    If MsgBox("Are you sure?" & vbNewLine & "(All progress will be reset)", vbYesNo + vbExclamation) = vbYes Then
+        Range("J2:L16").ClearContents
+        Range("E2:E16").ClearContents
+        Cells(2, 3).ClearContents
+        Cells(2, 8).ClearContents
+    End If
+End Sub
 Sub Click()
     totalRevenue = totalRevenue + itemRate(0)
     clickRevenue = clickRevenue + itemRate(0)
+    profitTotals(1) = profitTotals(1) + itemRate(0)
 End Sub
 
 '-------------------------------------------------- buildings --------------------------------------------------
