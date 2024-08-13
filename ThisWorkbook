@@ -1,0 +1,3 @@
+Sub Workbook_Open()
+    Call MainLoop
+End Sub
