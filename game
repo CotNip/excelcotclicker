@@ -1,4 +1,4 @@
-Public totalRevenue, clickRevenue As Double
+Public totalRevenue, clickRevenue, profitTotals(14) As Double
 Public generatorBaserate(12), generatorRate(12), generatorRevenue(12), generatorBasecost(12), generatorCost(12), generatorCC(12), generatorRC(12) As Double
 Public itemRate(13), itemBasecost(13), itemCost(13), itemCC(13), itemRC(13) As Double
 Public buildSpend, itemSpend As Double
@@ -15,17 +15,17 @@ Sub MainLoop()
         'define base costs
         generatorBasecost(0) = 15
         generatorBasecost(1) = 100
-        generatorBasecost(2) = 1000
-        generatorBasecost(3) = 5000
-        generatorBasecost(4) = 20000
-        generatorBasecost(5) = 100000
-        generatorBasecost(6) = 1000000
-        generatorBasecost(7) = 10000000
+        generatorBasecost(2) = 600
+        generatorBasecost(3) = 3000
+        generatorBasecost(4) = 10000
+        generatorBasecost(5) = 25000
+        generatorBasecost(6) = 150000
+        generatorBasecost(7) = 3500000
         generatorBasecost(8) = 150000000
-        generatorBasecost(9) = 1000000000
-        generatorBasecost(10) = 10000000000#
-        generatorBasecost(11) = 100000000000#
-        generatorBasecost(12) = 1000000000000#
+        generatorBasecost(9) = 5000000000#
+        generatorBasecost(10) = 30000000000#
+        generatorBasecost(11) = 900000000000#
+        generatorBasecost(12) = 25000000000000#
         
         itemBasecost(0) = 150
         itemBasecost(1) = 1000
@@ -51,20 +51,20 @@ Sub MainLoop()
         generatorBaserate(5) = 100
         generatorBaserate(6) = 500
         generatorBaserate(7) = 10000
-        generatorBaserate(8) = 500000
+        generatorBaserate(8) = 350000
         generatorBaserate(9) = 10000000
-        generatorBaserate(10) = 500000000
-        generatorBaserate(11) = 10000000000#
-        generatorBaserate(12) = 200000000000#
+        generatorBaserate(10) = 50000000
+        generatorBaserate(11) = 1000000000#
+        generatorBaserate(12) = 20000000000#
         
         'define cost coefficients > 0
         generatorCC(0) = 1.07
         generatorCC(1) = 1.05
-        generatorCC(2) = 1.04
-        generatorCC(3) = 1.035
-        generatorCC(4) = 1.03
-        generatorCC(5) = 1.025
-        generatorCC(6) = 1.02
+        generatorCC(2) = 1.025
+        generatorCC(3) = 1.03
+        generatorCC(4) = 1.02
+        generatorCC(5) = 1.02
+        generatorCC(6) = 1.018
         generatorCC(7) = 1.017
         generatorCC(8) = 1.013
         generatorCC(9) = 1.009
@@ -73,7 +73,7 @@ Sub MainLoop()
         generatorCC(12) = 1.00001
         
         itemCC(0) = 1.5
-        itemCC(1) = 1.05
+        itemCC(1) = 1.01
         itemCC(2) = 1.07
         itemCC(3) = 1.1
         itemCC(4) = 1.05
@@ -137,6 +137,7 @@ Sub MainLoop()
             Cells(x + 4, 3).Value = generatorCost(x)
         Next x
         
+        x = 0
         For x = 0 To UBound(itemRate)
             itemCost(x) = itemBasecost(x)
             itemQty(x) = Cells(x + 3, 10).Value
@@ -157,6 +158,19 @@ Sub MainLoop()
         
         Next x
         
+        x = 0
+        For x = 0 To UBound(profitTotals)
+            profitTotals(x) = Cells(x + 2, 12).Value
+        Next x
+            
+        ActiveSheet.Rows("6:16").EntireRow.Hidden = True
+        x = 6
+        For x = 5 To 16
+            If Cells(x, 5).Value >= 10 Then
+                ActiveSheet.Rows(x + 1).EntireRow.Hidden = False
+            End If
+        Next x
+            
         alertTime = Now + TimeValue("00:00:01")
         Application.OnTime alertTime, "Loop1000"
         
@@ -171,10 +185,12 @@ Sub MainLoop()
                 Cells(x + 4, 11) = generatorRevenue(x)
             Next x
             
-            '
-            'hide costs until affordable
-            '
-            '
+            x = 0
+            For x = 0 To UBound(profitTotals)
+                Cells(x + 2, 12).Value = profitTotals(x)
+            Next x
+            
+            Cells(2, 12).Value = Application.Sum(Range(Cells(3, 12), Cells(16, 12)))
         Loop
         
     End With
@@ -189,6 +205,7 @@ Sub Loop1000()
             Cells(y + 4, 4).Value = generatorRate(y) * itemRate(y + 1)
             totalRevenue = totalRevenue + (generatorRate(y) * itemRate(y + 1))
             Cells(y + 4, 11).Value = generatorRevenue(y)
+            profitTotals(y + 2) = profitTotals(y + 2) + (generatorRate(y) * itemRate(y + 1))
         End If
     Next y
     
@@ -198,7 +215,7 @@ Sub Loop1000()
     Cells(2, 5).Value = Application.Sum(Range(Cells(4, 5), Cells(16, 5)))
     Cells(2, 8).Value = itemSpend
     Cells(2, 10).Value = Application.Sum(Range(Cells(3, 10), Cells(16, 10)))
-            
+    
     alertTime = Now + TimeValue("00:00:01")
     Application.OnTime alertTime, "Loop1000"
     
@@ -208,10 +225,15 @@ Sub ItemButton(index As Integer)
     If totalRevenue >= itemCost(index) Then
         itemSpend = itemSpend + itemCost(index)
         totalRevenue = totalRevenue - itemCost(index)
+        profitTotals(index + 1) = profitTotals(index + 1) - itemCost(index)
+        
         itemQty(index) = itemQty(index) + 1
+        
         itemRate(index) = (itemQty(index) + 1) ^ itemRC(index)
+        
         Cells(index + 3, 10).Value = itemQty(index)
         Cells(index + 3, 6).Value = itemRate(index)
+        
         itemCost(index) = itemCost(index) ^ itemCC(index)
         Cells(index + 3, 8).Value = itemCost(index)
     End If
@@ -220,10 +242,18 @@ Sub GeneratorButton(index)
     If totalRevenue >= generatorCost(index) Then
         buildSpend = buildSpend + generatorCost(index)
         totalRevenue = totalRevenue - generatorCost(index)
+        profitTotals(index + 2) = profitTotals(index + 2) - generatorCost(index)
+        
         generatorQty(index) = generatorQty(index) + 1
+        If generatorQty(index) >= 10 Then
+            ActiveSheet.Rows(index + 5).EntireRow.Hidden = False
+        End If
+        
         generatorRate(index) = generatorBaserate(index) * (generatorQty(index) ^ generatorRC(index))
+        
         Cells(index + 4, 5).Value = generatorQty(index)
         Cells(index + 4, 4).Value = generatorRate(index) * itemRate(index + 1)
+        
         generatorCost(index) = generatorCost(index) ^ generatorCC(index)
         Cells(index + 4, 3).Value = generatorCost(index)
     End If
