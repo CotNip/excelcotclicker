@@ -2,6 +2,11 @@ Sub Quit()
     ActiveWorkbook.Save
     Application.Quit
 End Sub
+Sub StopCode()
+        Stop
+    End
+End Sub
+
 Sub Reset()
     If MsgBox("Are you sure?" & vbNewLine & "(All progress will be reset)", vbYesNo + vbExclamation) = vbYes Then
         Range("J2:L16").ClearContents
@@ -100,3 +105,4 @@ End Sub
 Sub ItemTax() 'index 13
     Call ItemButton(13)
 End Sub
+
