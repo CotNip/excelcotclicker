@@ -5,7 +5,7 @@ Public buildSpend, itemSpend As Double
 Public generatorQty(12), itemQty(13), x, y As Integer
 
 Sub MainLoop()
-    With Workbooks("excel clicker.xlsm").Worksheets("Sheet1")
+    With Workbooks("cotclicker.xlsm").Worksheets("Sheet1")
         totalRevenue = Cells(2, 11).Value
         clickRevenue = Cells(3, 11).Value
         itemSpend = Cells(2, 8).Value
@@ -185,12 +185,12 @@ Sub MainLoop()
                 Cells(x + 4, 11) = generatorRevenue(x)
             Next x
             
+            profitTotals(0) = Application.Sum(Range(Cells(3, 12), Cells(16, 12)))
+            
             x = 0
             For x = 0 To UBound(profitTotals)
                 Cells(x + 2, 12).Value = profitTotals(x)
             Next x
-            
-            Cells(2, 12).Value = Application.Sum(Range(Cells(3, 12), Cells(16, 12)))
         Loop
         
     End With
@@ -222,9 +222,8 @@ Sub Loop1000()
 End Sub
 Sub ItemButton(index As Integer)
     If itemCost(index) <= 0 Then Exit Sub
-    If totalRevenue >= itemCost(index) Then
+    If profitTotals(0) >= itemCost(index) Then
         itemSpend = itemSpend + itemCost(index)
-        totalRevenue = totalRevenue - itemCost(index)
         profitTotals(index + 1) = profitTotals(index + 1) - itemCost(index)
         
         itemQty(index) = itemQty(index) + 1
@@ -239,9 +238,9 @@ Sub ItemButton(index As Integer)
     End If
 End Sub
 Sub GeneratorButton(index)
-    If totalRevenue >= generatorCost(index) Then
+    If generatorCost(index) <= 0 Then Exit Sub
+    If profitTotals(0) >= generatorCost(index) Then
         buildSpend = buildSpend + generatorCost(index)
-        totalRevenue = totalRevenue - generatorCost(index)
         profitTotals(index + 2) = profitTotals(index + 2) - generatorCost(index)
         
         generatorQty(index) = generatorQty(index) + 1
