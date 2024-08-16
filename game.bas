@@ -59,10 +59,10 @@ Sub MainLoop()
         generatorBaserate(12) = 20000000000#
         
         'define cost coefficients > 0
-        generatorCC(0) = 1.07
-        generatorCC(1) = 1.05
+        generatorCC(0) = 1.03
+        generatorCC(1) = 1.03
         generatorCC(2) = 1.025
-        generatorCC(3) = 1.03
+        generatorCC(3) = 1.02
         generatorCC(4) = 1.02
         generatorCC(5) = 1.02
         generatorCC(6) = 1.018
